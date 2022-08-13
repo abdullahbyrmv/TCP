@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class TCPServer {
     public static void main(String[] args) throws Exception {
-
+        readAsBytes();
     }
 
     public static void readAsBytes() throws Exception {
