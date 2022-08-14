@@ -8,7 +8,8 @@ public class TCPClient {
         OutputStream out = ClientSocket.getOutputStream();
         DataOutputStream dataOut = new DataOutputStream(out);
 
-        byte[] bytes = FileUtility.read_by_bytes("test.jpg");
+//        byte[] bytes = FileUtility.read_by_bytes("test.jpg");
+        byte[] bytes = "test".getBytes();
         dataOut.writeInt(bytes.length);
         dataOut.write(bytes);
         ClientSocket.close();

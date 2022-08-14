@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,9 +13,50 @@ public class TCPServer {
         while (true) {
             Socket connection = FirstServerSocket.accept();
             DataInputStream dataStream = new DataInputStream(connection.getInputStream());
-            byte[] arr = readMessage(dataStream);
-            FileUtility.write_by_bytes("testCopy.jpg", arr);
+
+//            byte[] arr = readMessage(dataStream);
+//            FileUtility.write_by_bytes("testCopy.jpg", arr);
+
+            String res = readRequest(dataStream);
+            System.out.println(res);
+
+            OutputStream outStr = connection.getOutputStream();
+            DataOutputStream dataOutStr = new DataOutputStream(outStr);
+
+            byte[] bytes = FileUtility.read_by_bytes("C:\\Users\\User\\Desktop\\JAVA PROJECTS\\TCP\\src\\test.jpg");
+            writeResponse(dataOutStr, bytes);
+//            byte[] arr = readMessage(dataStream);
+//            FileUtility.write_by_bytes("testCopy.jpg", arr);
+            connection.close();
         }
+    }
+
+    private static void writeResponse(OutputStream out, byte[] s) throws Exception {
+        String response = "HTTP/1.1 200 OK\r\n"
+                + "Server: YarServer/2009-09-09\r\n"
+                + "Content-Type: image/jpeg\r\n"
+                + "Content-Length: " + s.length + "\r\n"
+                + "Connection : close\r\n";
+        String result = response + s;
+        out.write(result.getBytes());
+        out.flush();
+    }
+
+    private static String readRequest(InputStream in) throws IOException {
+        InputStreamReader isr = new InputStreamReader(in);
+        BufferedReader reader = new BufferedReader(isr);
+        String msg = "";
+        while (true) {
+            String s = reader.readLine();
+            if (s == null || s.trim().length() == 0) {
+                break;
+            } else {
+                msg = msg + s + "\r\n";
+            }
+            System.out.println("Server request : " + s);
+            System.out.println();
+        }
+        return msg;
     }
 
     public static byte[] readMessage(DataInputStream din) throws Exception {
